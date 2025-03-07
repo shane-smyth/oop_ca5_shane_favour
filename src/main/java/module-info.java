@@ -8,8 +8,9 @@ module org.example.oop_ca5_shane_favour {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
+//    requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
 
     opens org.example.oop_ca5_shane_favour to javafx.fxml;
     exports org.example.oop_ca5_shane_favour;
