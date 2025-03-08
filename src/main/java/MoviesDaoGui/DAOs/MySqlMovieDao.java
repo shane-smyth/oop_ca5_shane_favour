@@ -188,4 +188,50 @@ public class MySqlMovieDao extends MySqlDao implements MovieDaoInterface {
         }
         return newMovie;
     }
+
+
+    @Override
+    public List<Movie> filterByTitle(String filter) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Movie> movies = new ArrayList<>();
+
+        try {
+            connection = this.getConnection();
+            String query = "SELECT * FROM movies WHERE title LIKE ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, '%'+filter+'%');
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int movieId = resultSet.getInt("id");
+                String title = resultSet.getString("title");
+                int year = resultSet.getInt("release_year");
+                double rating = resultSet.getDouble("rating");
+                String genre = resultSet.getString("genre");
+                int duration = resultSet.getInt("duration");
+                int director = resultSet.getInt("director_id");
+                Movie m = new Movie(movieId, title, year, genre, rating, duration, director);
+                movies.add(m);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("filterByTitle(" + filter + ") " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    freeConnection(connection);
+                }
+            } catch (SQLException e) {
+                throw new DaoException("getMovieById() " + e.getMessage());
+            }
+        }
+        return movies;
+    }
 }

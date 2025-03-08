@@ -33,23 +33,34 @@ public class AppMain {
 //            System.out.println(movie.toString());
 //        }
 
-        System.out.println("Enter Title: ");
-        String title = keyboard.nextLine();
-        System.out.println("Enter Year: ");
-        int year = keyboard.nextInt();
-        System.out.println("Enter Rating: ");
-        double rating = keyboard.nextDouble();
-        keyboard.nextLine();
-        System.out.println("Enter Genre: ");
-        String genre = keyboard.nextLine();
-        System.out.println("Enter Duration: ");
-        int duration = keyboard.nextInt();
-        keyboard.nextLine();
-        System.out.println("Enter Director: ");
-        int director = keyboard.nextInt();
-        keyboard.nextLine();
-        Movie newMovie = new Movie(title, year, genre, rating, duration, director);
-        IMovieDao.addMovie(newMovie);
-        System.out.println("Movie Added\n" + newMovie.toString());
+//        System.out.println("Enter Title: ");
+//        String title = keyboard.nextLine();
+//        System.out.println("Enter Year: ");
+//        int year = keyboard.nextInt();
+//        System.out.println("Enter Rating: ");
+//        double rating = keyboard.nextDouble();
+//        keyboard.nextLine();
+//        System.out.println("Enter Genre: ");
+//        String genre = keyboard.nextLine();
+//        System.out.println("Enter Duration: ");
+//        int duration = keyboard.nextInt();
+//        keyboard.nextLine();
+//        System.out.println("Enter Director: ");
+//        int director = keyboard.nextInt();
+//        keyboard.nextLine();
+//        Movie newMovie = new Movie(title, year, genre, rating, duration, director);
+//        IMovieDao.addMovie(newMovie);
+//        System.out.println("Movie Added\n" + newMovie.toString());
+
+        System.out.println("Enter a String to filter by Title: ");
+        String filter = keyboard.nextLine();
+        List<Movie> movies = IMovieDao.filterByTitle(filter);
+        if (movies.isEmpty()) {
+            System.out.println("No movies found");
+        } else {
+            for (Movie movie : movies) {
+                System.out.println(movie);
+            }
+        }
     }
 }
