@@ -15,22 +15,41 @@ public class AppMain {
         Scanner keyboard = new Scanner(System.in);
         MovieDaoInterface IMovieDao = new MySqlMovieDao();
 
-        List<Movie> movies = IMovieDao.getMovies();
-        for (Movie movie : movies) {
-            System.out.println(movie.toString());
-        }
+//        List<Movie> movies = IMovieDao.getMovies();
+//        for (Movie movie : movies) {
+//            System.out.println(movie.toString());
+//        }
 
 //        System.out.println("Enter a Movie ID: ");
 //        int userMovieId = keyboard.nextInt();
 //        Movie movieById = IMovieDao.getMovieById(userMovieId);
 //        System.out.println(movieById.toString());
 
-        System.out.println("Enter a Movie ID: ");
-        int userMovieId = keyboard.nextInt();
-        IMovieDao.deleteMovieById(userMovieId);
-        List<Movie> m = IMovieDao.getMovies();
-        for (Movie movie : m) {
-            System.out.println(movie.toString());
-        }
+//        System.out.println("Enter a Movie ID: ");
+//        int userMovieId = keyboard.nextInt();
+//        IMovieDao.deleteMovieById(userMovieId);
+//        List<Movie> m = IMovieDao.getMovies();
+//        for (Movie movie : m) {
+//            System.out.println(movie.toString());
+//        }
+
+        System.out.println("Enter Title: ");
+        String title = keyboard.nextLine();
+        System.out.println("Enter Year: ");
+        int year = keyboard.nextInt();
+        System.out.println("Enter Rating: ");
+        double rating = keyboard.nextDouble();
+        keyboard.nextLine();
+        System.out.println("Enter Genre: ");
+        String genre = keyboard.nextLine();
+        System.out.println("Enter Duration: ");
+        int duration = keyboard.nextInt();
+        keyboard.nextLine();
+        System.out.println("Enter Director: ");
+        int director = keyboard.nextInt();
+        keyboard.nextLine();
+        Movie newMovie = new Movie(title, year, genre, rating, duration, director);
+        IMovieDao.addMovie(newMovie);
+        System.out.println("Movie Added\n" + newMovie.toString());
     }
 }

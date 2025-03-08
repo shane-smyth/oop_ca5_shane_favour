@@ -27,7 +27,7 @@ public class Movie {
         this.duration = duration;
         this.director_id = director_id;
     }
-    public Movie() {
+    public Movie(String title, int year, int rating, String genre, int duration, int director) {
 
     }
 

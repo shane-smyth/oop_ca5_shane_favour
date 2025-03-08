@@ -3,10 +3,7 @@ package MoviesDaoGui.DAOs;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +93,7 @@ public class MySqlMovieDao extends MySqlDao implements MovieDaoInterface {
                     freeConnection(connection);
                 }
             } catch (SQLException e) {
-                throw new DaoException("getAllTasksWithTag() " + e.getMessage());
+                throw new DaoException("getMovieById() " + e.getMessage());
             }
         }
         return movie;
@@ -134,5 +131,61 @@ public class MySqlMovieDao extends MySqlDao implements MovieDaoInterface {
                 throw new DaoException("deleteExpense() " + e.getMessage());
             }
         }
+    }
+
+
+    @Override
+    public Movie addMovie(Movie movie) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet generatedKeys = null;
+        Movie newMovie = null;
+
+        try {
+            connection = this.getConnection();
+
+            String query = "INSERT INTO movies (title, release_year, rating, genre, duration, director_id) VALUES (?, ?, ?, ?, ?, ?)";
+            preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); //https://www.ibm.com/docs/en/db2/11.5?topic=applications-retrieving-auto-generated-keys-insert-statement
+
+            preparedStatement.setString(1, movie.getTitle());
+            preparedStatement.setInt(2, movie.getRelease_year());
+            preparedStatement.setDouble(3, movie.getRating());
+            preparedStatement.setString(4, movie.getGenre());
+            preparedStatement.setInt(5, movie.getDuration());
+            preparedStatement.setInt(6, movie.getDirector_id());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new DaoException("Creating movie failed.");
+            }
+
+            // retrieve the auto-generated ID created by the database for the new movie
+            generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int movieId = generatedKeys.getInt(1);
+                newMovie = new Movie(movieId, movie.getTitle(), movie.getRelease_year(), movie.getGenre(), movie.getRating(), movie.getDuration(), movie.getDirector_id());
+            } else {
+                throw new DaoException("Creating movie failed. No id given.");
+            }
+
+        } catch (SQLException e) {
+            throw new DaoException("addMovie() " + e.getMessage());
+        } finally {
+            try {
+                if (generatedKeys != null) {
+                    generatedKeys.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    freeConnection(connection);
+                }
+            } catch (SQLException e) {
+                throw new DaoException("addMovie() " + e.getMessage());
+            }
+        }
+        return newMovie;
     }
 }

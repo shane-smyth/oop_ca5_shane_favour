@@ -11,4 +11,6 @@ public interface MovieDaoInterface {
     public Movie getMovieById(int id) throws DaoException;
 
     public void deleteMovieById(int id) throws DaoException;
+
+    public Movie addMovie(Movie movie) throws DaoException;
 }
