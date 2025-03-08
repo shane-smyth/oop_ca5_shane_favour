@@ -9,4 +9,6 @@ public interface MovieDaoInterface {
     public List<Movie> getMovies() throws DaoException;
 
     public Movie getMovieById(int id) throws DaoException;
+
+    public void deleteMovieById(int id) throws DaoException;
 }

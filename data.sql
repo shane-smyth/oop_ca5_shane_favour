@@ -74,9 +74,10 @@ INSERT INTO actors (name) VALUES
 CREATE TABLE IF NOT EXISTS movie_actors (
                                             movie_id INT NOT NULL,
                                             actor_id INT NOT NULL,
-                                            FOREIGN KEY (movie_id) REFERENCES movies(id),
-    FOREIGN KEY (actor_id) REFERENCES actors(actor_id)
+                                            FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
+    FOREIGN KEY (actor_id) REFERENCES actors(actor_id) ON DELETE CASCADE
     );
+
 
 -- Link Movies to Actors
 INSERT INTO movie_actors (movie_id, actor_id) VALUES

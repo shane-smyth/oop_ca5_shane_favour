@@ -101,4 +101,38 @@ public class MySqlMovieDao extends MySqlDao implements MovieDaoInterface {
         }
         return movie;
     }
+
+
+    @Override
+    public void deleteMovieById(int id) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = this.getConnection();
+            String query = "DELETE FROM movies WHERE id = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (DaoException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement != null)
+                {
+                    preparedStatement.close();
+                }
+                if (connection != null)
+                {
+                    freeConnection(connection);
+                }
+            }
+            catch (SQLException e)
+            {
+                throw new DaoException("deleteExpense() " + e.getMessage());
+            }
+        }
+    }
 }

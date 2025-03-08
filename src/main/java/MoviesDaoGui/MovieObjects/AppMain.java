@@ -15,14 +15,22 @@ public class AppMain {
         Scanner keyboard = new Scanner(System.in);
         MovieDaoInterface IMovieDao = new MySqlMovieDao();
 
-//        List<Movie> movies = IMovieDao.getMovies();
-//        for (Movie movie : movies) {
-//            System.out.println(movie.toString());
-//        }
+        List<Movie> movies = IMovieDao.getMovies();
+        for (Movie movie : movies) {
+            System.out.println(movie.toString());
+        }
+
+//        System.out.println("Enter a Movie ID: ");
+//        int userMovieId = keyboard.nextInt();
+//        Movie movieById = IMovieDao.getMovieById(userMovieId);
+//        System.out.println(movieById.toString());
 
         System.out.println("Enter a Movie ID: ");
         int userMovieId = keyboard.nextInt();
-        Movie movieById = IMovieDao.getMovieById(userMovieId);
-        System.out.println(movieById.toString());
+        IMovieDao.deleteMovieById(userMovieId);
+        List<Movie> m = IMovieDao.getMovies();
+        for (Movie movie : m) {
+            System.out.println(movie.toString());
+        }
     }
 }
