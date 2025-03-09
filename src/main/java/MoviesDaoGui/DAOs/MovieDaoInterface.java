@@ -14,5 +14,7 @@ public interface MovieDaoInterface {
 
     public Movie addMovie(Movie movie) throws DaoException;
 
+    public void updateTitle(int id, String change) throws DaoException;
+
     public List<Movie> filterByTitle(String title) throws DaoException;
 }

@@ -191,6 +191,39 @@ public class MySqlMovieDao extends MySqlDao implements MovieDaoInterface {
 
 
     @Override
+    public void updateTitle(int id, String change) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = this.getConnection();
+            String query = "UPDATE movies SET title = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, change);
+            preparedStatement.setInt(2, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException("updateTitle(" + id + ") " + e.getMessage());
+        } finally {
+            try {
+                if (preparedStatement != null)
+                {
+                    preparedStatement.close();
+                }
+                if (connection != null)
+                {
+                    freeConnection(connection);
+                }
+            }
+            catch (SQLException e) {
+                throw new DaoException("updateTitle(" + id + ")  " + e.getMessage());
+            }
+        }
+    }
+
+
+    @Override
     public List<Movie> filterByTitle(String filter) throws DaoException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;

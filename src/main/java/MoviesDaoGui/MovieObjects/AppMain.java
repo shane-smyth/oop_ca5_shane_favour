@@ -52,15 +52,22 @@ public class AppMain {
 //        IMovieDao.addMovie(newMovie);
 //        System.out.println("Movie Added\n" + newMovie.toString());
 
-        System.out.println("Enter a String to filter by Title: ");
-        String filter = keyboard.nextLine();
-        List<Movie> movies = IMovieDao.filterByTitle(filter);
-        if (movies.isEmpty()) {
-            System.out.println("No movies found");
-        } else {
-            for (Movie movie : movies) {
-                System.out.println(movie);
-            }
-        }
+        System.out.println("Enter a movie ID: ");
+        int movieId = keyboard.nextInt();
+        keyboard.nextLine();
+        System.out.println("Enter modified title: ");
+        String title = keyboard.nextLine();
+        IMovieDao.updateTitle(movieId, title);
+
+//        System.out.println("Enter a String to filter by Title: ");
+//        String filter = keyboard.nextLine();
+//        List<Movie> movies = IMovieDao.filterByTitle(filter);
+//        if (movies.isEmpty()) {
+//            System.out.println("No movies found");
+//        } else {
+//            for (Movie movie : movies) {
+//                System.out.println(movie);
+//            }
+//        }
     }
 }
