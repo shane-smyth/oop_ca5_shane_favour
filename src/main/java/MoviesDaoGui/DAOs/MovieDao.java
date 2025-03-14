@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MySqlMovieDao extends MySqlDao implements MovieDaoInterface {
+public class MovieDao extends MySqlDao implements MovieDaoInterface {
     @Override
     public List<Movie> getMovies() throws DaoException {
         Connection connection = null;

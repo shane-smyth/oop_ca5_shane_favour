@@ -1,7 +1,7 @@
 package MoviesDaoGui.MovieObjects;
 
 import MoviesDaoGui.DAOs.MovieDaoInterface;
-import MoviesDaoGui.DAOs.MySqlMovieDao;
+import MoviesDaoGui.DAOs.MovieDao;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
 import MoviesDaoGui.Converters.JsonConverter;
@@ -33,7 +33,7 @@ public class AppMain {
                 ""
         };
 
-        MovieDaoInterface IMovieDao = new MySqlMovieDao();
+        MovieDaoInterface IMovieDao = new MovieDao();
 
         int menuChoice = -1;
         do {
@@ -169,6 +169,7 @@ public class AppMain {
                         List<Movie> moviesForJson = IMovieDao.getMovies();
                         String jsonString = JsonConverter.moviesListToJsonString(moviesForJson);
                         System.out.println(jsonString);
+                        break;
 
                     case 8:
                         System.out.print("Enter a Movie ID : ");
@@ -180,6 +181,7 @@ public class AppMain {
                         } else {
                             System.out.println("Movie not found !");
                         }
+                        break;
 
                     case 0:
                         System.out.println("Exiting the application...");
