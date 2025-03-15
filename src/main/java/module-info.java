@@ -11,6 +11,7 @@ module org.example.oop_ca5_shane_favour {
 //    requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires org.json;
 
     opens org.example.oop_ca5_shane_favour to javafx.fxml;
     exports org.example.oop_ca5_shane_favour;

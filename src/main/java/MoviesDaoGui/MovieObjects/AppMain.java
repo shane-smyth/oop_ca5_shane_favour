@@ -1,9 +1,10 @@
 package MoviesDaoGui.MovieObjects;
 
 import MoviesDaoGui.DAOs.MovieDaoInterface;
-import MoviesDaoGui.DAOs.MySqlMovieDao;
+import MoviesDaoGui.DAOs.MovieDao;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
+import MoviesDaoGui.Converters.JsonConverter;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -27,10 +28,12 @@ public class AppMain {
                 "4. Add New Movie",
                 "5. Update Movie Title by ID",
                 "6. Filter Movies by Title",
+                "7. moviesListToJsonString",
+                "8. movieToJsonObject",
                 ""
         };
 
-        MovieDaoInterface IMovieDao = new MySqlMovieDao();
+        MovieDaoInterface IMovieDao = new MovieDao();
 
         int menuChoice = -1;
         do {
@@ -160,6 +163,24 @@ public class AppMain {
                             }
                         }
                         System.out.println("- COMPLETED FILTERING MOVIES BY TITLE -");
+                        break;
+
+                    case 7:
+                        List<Movie> moviesForJson = IMovieDao.getMovies();
+                        String jsonString = JsonConverter.moviesListToJsonString(moviesForJson);
+                        System.out.println(jsonString);
+                        break;
+
+                    case 8:
+                        System.out.print("Enter a Movie ID : ");
+                        int movieIdForJson = keyboard.nextInt();
+                        Movie movieForJson = IMovieDao.getMovieById(movieIdForJson);
+                        if (movieForJson != null) {
+                            String movieJson = JsonConverter.movieToJsonObject(movieForJson);
+                            System.out.println(movieJson);
+                        } else {
+                            System.out.println("Movie not found !");
+                        }
                         break;
 
                     case 0:

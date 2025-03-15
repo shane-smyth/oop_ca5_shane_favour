@@ -1,5 +1,8 @@
 package MoviesDaoGui.DTOs;
 
+import MoviesDaoGui.DAOs.DirectorDao;
+import MoviesDaoGui.Exceptions.DaoException;
+
 public class Movie {
     private int id;
     private String title;
@@ -8,6 +11,7 @@ public class Movie {
     private String genre;
     private int duration;
     private int director_id;
+    private static DirectorDao directorDao = new DirectorDao();
 
     public Movie(int id, String title, int release_year, String genre, double rating, int duration, int director_id) {
         this.id = id;
@@ -89,6 +93,12 @@ public class Movie {
 
     @Override
     public String toString() {
+        String directorName;
+        try {
+            directorName = directorDao.getDirectorNameById(director_id);
+        } catch (DaoException e) {
+            throw new RuntimeException(e);
+        }
         return "Movies{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
@@ -96,7 +106,7 @@ public class Movie {
                 ", rating=" + rating +
                 ", genre='" + genre + '\'' +
                 ", duration=" + duration +
-                ", director_id=" + director_id +
+                ", director=" + directorName +
                 '}';
     }
 }
