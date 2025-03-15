@@ -28,8 +28,8 @@ public class AppMain {
                 "4. Add New Movie",
                 "5. Update Movie Title by ID",
                 "6. Filter Movies by Title",
-                "7. moviesListToJsonString",
-                "8. movieToJsonObject",
+                "7. Convert Moviea List to JSON",
+                "8. Convert Movie to JSON by ID",
                 ""
         };
 
@@ -166,21 +166,38 @@ public class AppMain {
                         break;
 
                     case 7:
+                        System.out.println("- CONVERT MOVIES LIST TO JSON -");
+
                         List<Movie> moviesForJson = IMovieDao.getMovies();
-                        String jsonString = JsonConverter.moviesListToJsonString(moviesForJson);
-                        System.out.println(jsonString);
+                        if (moviesForJson.isEmpty()) {
+                            System.out.println("No movies found !");
+                        }
+                        else {
+                            String jsonString = JsonConverter.moviesListToJsonString(moviesForJson);
+                            System.out.println("JSON Output :: " + jsonString);
+                        }
+                        System.out.println("- COMPLETED CONVERTING MOVIES LIST TO JSON -");
                         break;
 
                     case 8:
+                        System.out.println("- CONVERT MOVIE TO JSON -");
+
                         System.out.print("Enter a Movie ID : ");
                         int movieIdForJson = keyboard.nextInt();
-                        Movie movieForJson = IMovieDao.getMovieById(movieIdForJson);
-                        if (movieForJson != null) {
-                            String movieJson = JsonConverter.movieToJsonObject(movieForJson);
-                            System.out.println(movieJson);
-                        } else {
-                            System.out.println("Movie not found !");
+                        try {
+                            Movie movieForJson = IMovieDao.getMovieById(movieIdForJson);
+                            if (movieForJson != null) {
+                                String movieJson = JsonConverter.movieToJsonObject(movieForJson);
+                                System.out.println("JSON Output :: " + movieJson);
+                            }
+                            else {
+                                System.out.println("No movie found !");
+                            }
+                        } catch (DaoException e) {
+                            System.out.println(e.getMessage());
+                            System.out.println("FAILED.");
                         }
+                        System.out.println("- COMPLETED CONVERTING MOVIE TO JSON -");
                         break;
 
                     case 0:
