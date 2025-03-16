@@ -136,6 +136,26 @@ public class MovieDao extends MySqlDao implements MovieDaoInterface {
 
     @Override
     public Movie addMovie(Movie movie) throws DaoException {
+        // validating input
+        if (movie.getTitle() == null || movie.getTitle().trim().isEmpty()) {
+            throw new DaoException("Movie title cannot be empty !");
+        }
+        if (movie.getRelease_year() <= 0) {
+            throw new DaoException("Release year must be a positive number !");
+        }
+        if (movie.getRating() < 0 || movie.getRating() > 10) {
+            throw new DaoException("Rating must be between 0 and 10 !");
+        }
+        if (movie.getGenre() == null || movie.getGenre().trim().isEmpty()) {
+            throw new DaoException("Genre cannot be empty !");
+        }
+        if (movie.getDuration() <= 0) {
+            throw new DaoException("Duration must be a positive number !");
+        }
+        if (movie.getDirector_id() <= 0) {
+            throw new DaoException("Director ID must be a positive number !");
+        }
+
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet generatedKeys = null;
