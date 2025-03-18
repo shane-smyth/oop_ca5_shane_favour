@@ -6,6 +6,11 @@ import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
 import MoviesDaoGui.Converters.JsonConverter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -30,6 +35,7 @@ public class AppMain {
                 "6. Filter Movies by Title",
                 "7. Convert Moviea List to JSON",
                 "8. Convert Movie to JSON by ID",
+                "9. Display Movie by ID (Client-Server)",
                 ""
         };
 
@@ -64,7 +70,8 @@ public class AppMain {
                         Movie movie = IMovieDao.getMovieById(movieId);
                         if (movie != null) {
                             System.out.println("Movie Found :: " + movie.toString());
-                        } else {
+                        }
+                        else {
                             System.out.println("Movie not found !");
                         }
                         System.out.println("- COMPLETED FINDING MOVIE BY ID -");
@@ -200,6 +207,26 @@ public class AppMain {
                         System.out.println("- COMPLETED CONVERTING MOVIE TO JSON -");
                         break;
 
+                    case 9:
+                        System.out.println("- DISPLAY MOVIE BY ID (CLIENT-SERVER) -");
+
+                        System.out.print("Enter a Movie ID : ");
+                        movieId = keyboard.nextInt();
+
+                        // sending request to server
+                        String request = "displayMovieById:" + movieId;
+                        String jsonResponse = sendRequestToServer(request);
+
+                        if (jsonResponse != null && !jsonResponse.isEmpty()) {
+                            movie = JsonConverter.jsonToMovie(jsonResponse);
+                            System.out.println("Movie Found :: " + movie.toString());
+                        }
+                        else {
+                            System.out.println("Movie not found !");
+                        }
+                        System.out.println("- COMPLETED DISPLAYING MOVIE BY ID -");
+                        break;
+
                     case 0:
                         System.out.println("Exiting the application...");
                         break;
@@ -235,5 +262,22 @@ public class AppMain {
             choice = keyboard.nextInt();
         }
         return choice;
+    }
+
+    private static String sendRequestToServer( String request ) {
+        final String SERVER_IP = "localhost";
+        final int SERVER_PORT = 8888;
+
+        try (Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            socketWriter.println(request); // sending request to server
+            return socketReader.readLine(); // and get a response back
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }

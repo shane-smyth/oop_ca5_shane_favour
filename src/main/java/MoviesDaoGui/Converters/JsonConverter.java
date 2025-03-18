@@ -36,4 +36,18 @@ public class JsonConverter {
         jsonObject.put("director", movie.getDirector_id());
         return jsonObject.toString();
     }
+
+
+    public static Movie jsonToMovie(String jsonString) {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        return new Movie(
+                jsonObject.getInt("id"),
+                jsonObject.getString("title"),
+                jsonObject.getInt("release_year"),
+                jsonObject.getString("genre"),
+                jsonObject.getDouble("rating"),
+                jsonObject.getInt("duration"),
+                jsonObject.getInt("director")
+        );
+    }
 }
