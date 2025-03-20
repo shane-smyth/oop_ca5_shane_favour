@@ -36,6 +36,7 @@ public class AppMain {
                 "7. Convert Moviea List to JSON",
                 "8. Convert Movie to JSON by ID",
                 "9. Display Movie by ID (Client-Server)",
+                "10. Display All Movies (Client-Server)",
                 ""
         };
 
@@ -224,7 +225,30 @@ public class AppMain {
                         else {
                             System.out.println("Movie not found !");
                         }
-                        System.out.println("- COMPLETED DISPLAYING MOVIE BY ID -");
+                        System.out.println("- COMPLETED DISPLAYING MOVIE BY ID (CLIENT-SERVER) -");
+                        break;
+
+                    case 10:
+                        System.out.println("- DISPLAY ALL MOVIES (CLIENT-SERVER) -");
+
+                        request = "displayAllMovies";
+                        jsonResponse = sendRequestToServer(request);
+
+                        if (jsonResponse != null && !jsonResponse.isEmpty()) {
+                            movies = JsonConverter.jsonToMovieList(jsonResponse);
+                            if (movies.isEmpty()) {
+                                System.out.println("No movies found !");
+                            }
+                            else {
+                                for (Movie moovie : movies) {
+                                    System.out.println("Movie :: " + moovie.toString());
+                                }
+                            }
+                        }
+                        else {
+                            System.out.println("FAILED.");
+                        }
+                        System.out.println("- COMPLETED DISPLAYING ALL MOVIES (CLIENT-SERVER) -");
                         break;
 
                     case 0:

@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 public class Server {
     final static int SERVER_PORT_NUMBER = 8888;  // could be any port from 1024 to 49151 (that doesn't clash with other Apps)
@@ -46,6 +47,19 @@ public class Server {
                         }
                         else {
                             out.println("Movie not found !");
+                        }
+                    }
+
+                    if (request.startsWith("displayAllMovies")) {
+                        MovieDao movieDao = new MovieDao();
+                        List<Movie> movies = movieDao.getMovies();
+
+                        if (!movies.isEmpty()) {
+                            String jsonResponse = JsonConverter.moviesListToJsonString(movies);
+                            out.println(jsonResponse);
+                        }
+                        else {
+                            out.println("No movies found !");
                         }
                     }
                 }

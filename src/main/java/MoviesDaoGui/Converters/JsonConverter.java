@@ -4,6 +4,7 @@ import MoviesDaoGui.DTOs.Movie;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonConverter {
@@ -49,5 +50,24 @@ public class JsonConverter {
                 jsonObject.getInt("duration"),
                 jsonObject.getInt("director")
         );
+    }
+
+    public static List<Movie> jsonToMovieList(String jsonString) {
+        List<Movie> movies = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray(jsonString);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Movie movie = new Movie(
+                    jsonObject.getInt("id"),
+                    jsonObject.getString("title"),
+                    jsonObject.getInt("release_year"),
+                    jsonObject.getString("genre"),
+                    jsonObject.getDouble("rating"),
+                    jsonObject.getInt("duration"),
+                    jsonObject.getInt("director")
+            );
+            movies.add(movie);
+        }
+        return movies;
     }
 }
