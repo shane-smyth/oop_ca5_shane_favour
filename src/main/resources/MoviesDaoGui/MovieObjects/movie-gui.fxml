@@ -3,28 +3,34 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17.0.12"
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="MoviesDaoGui.GUI.MovieListController"
-      spacing="10">
+      spacing="15"
+      style="-fx-background-color: #f5f7fa;">
+
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
 
-    <Label text="Movie Database" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <!-- Header Section -->
+    <HBox id="movieHeader" spacing="20" alignment="CENTER_LEFT">
+        <Label text="Movie Database" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-    <HBox spacing="10">
-        <Button text="Show All" onAction="#onShowAllMovies"/>
-        <Button text="Find By ID" onAction="#onFindById"/>
-        <Button text="Add Movie" onAction="#onAddMovie"/>
-        <Button text="Update Title" onAction="#onUpdateMovie"/>
-        <Button text="Delete Movie" onAction="#onDeleteMovie"/>
-        <Button text="Filter Movies" onAction="#onFilterMovies"/>
+        <HBox spacing="10" alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+            <Button text="Show All" onAction="#onShowAllMovies"/>
+            <Button text="Find By ID" onAction="#onFindById"/>
+            <Button text="Add Movie" onAction="#onAddMovie"/>
+            <Button text="Update Title" onAction="#onUpdateMovie"/>
+            <Button text="Delete Movie" onAction="#onDeleteMovie"/>
+            <Button text="Filter" onAction="#onFilterMovies"/>
+        </HBox>
     </HBox>
 
-    <TableView fx:id="movieTable" prefHeight="400">
+    <TableView fx:id="movieTable" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 0, 3, 5, 0);">
+        <minHeight>400</minHeight>
+        <VBox.vgrow>ALWAYS</VBox.vgrow>
         <columns>
             <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
             <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
@@ -32,9 +38,10 @@
             <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="80"/>
             <TableColumn fx:id="genreColumn" text="Genre" prefWidth="100"/>
             <TableColumn fx:id="durationColumn" text="Duration" prefWidth="80"/>
-            <TableColumn fx:id="directorColumn" text="Director" prefWidth="120"/>
+            <TableColumn fx:id="directorColumn" text="Director" prefWidth="150"/>
         </columns>
     </TableView>
 
+    <!-- Status Message -->
     <Label fx:id="messageLabel" style="-fx-font-style: italic;"/>
 </VBox>
