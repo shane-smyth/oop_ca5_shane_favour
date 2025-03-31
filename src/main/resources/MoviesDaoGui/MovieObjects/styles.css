@@ -1,0 +1,40 @@
+.table-view {
+    -fx-base: #ffffff;
+    -fx-control-inner-background: #f8f9fa;
+    -fx-table-header-border-color: transparent;
+    -fx-table-cell-border-color: #dee2e6;
+}
+
+.table-column {
+    -fx-alignment: CENTER;
+    -fx-font-size: 14px;
+}
+
+.button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #343a40;
+}
+
+#titleText {
+    -fx-font-size: 24px;
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+#messageLabel {
+    -fx-text-fill: #28a745;
+    -fx-font-style: italic;
+}

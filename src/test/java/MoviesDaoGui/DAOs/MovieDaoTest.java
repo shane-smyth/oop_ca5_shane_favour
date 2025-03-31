@@ -27,6 +27,7 @@ class MovieDaoTest {
         Movie actual = movieDao.getMovieById(movieId);
         assertEquals(expected, actual.getId());
     }
+
     @Test
     void getMovieById_invalidId() throws DaoException {
         MovieDao movieDao = new MovieDao();
@@ -47,7 +48,7 @@ class MovieDaoTest {
 //        assertNull(actual);
 //    }
 
-//    @Test
+    //    @Test
 //    void addMovie() throws DaoException {
 //        MovieDao movieDao = new MovieDao();
 //        Movie newMovie = new Movie("TEST", 2003, "Drama", 8.5, 90, 1);
@@ -55,18 +56,18 @@ class MovieDaoTest {
 //        Movie actual = movieDao.addMovie(newMovie);
 //        assertEquals(expected, actual.getTitle());
 //    }
-@Test
-void addMovie_invalidYear() {
-    MovieDao movieDao = new MovieDao();
-    Movie newMovie = new Movie("TEST", -1, "Drama", 8.5, 90, 1); // Invalid release year
-    Movie actual = null;
-    try {
-        actual = movieDao.addMovie(newMovie);
-    } catch (DaoException e) {
+    @Test
+    void addMovie_invalidYear() {
+        MovieDao movieDao = new MovieDao();
+        Movie newMovie = new Movie("TEST", -1, "Drama", 8.5, 90, 1); // Invalid release year
+        Movie actual = null;
+        try {
+            actual = movieDao.addMovie(newMovie);
+        } catch (DaoException e) {
 
+        }
+        assertNull(actual); // expecting null because the movie should not be added
     }
-    assertNull(actual); // expecting null because the movie should not be added
-}
 
 
     @Test
@@ -79,6 +80,7 @@ void addMovie_invalidYear() {
         Movie actual = movieDao.getMovieById(movieIdToUpdate);
         assertEquals(expected, actual.getTitle());
     }
+
     @Test
     void updateTitle_invalidId() throws DaoException {
         MovieDao movieDao = new MovieDao();
@@ -103,6 +105,7 @@ void addMovie_invalidYear() {
             }
         }
     }
+
     @Test
     void filterByTitle_noMatch() throws DaoException {
         MovieDao movieDao = new MovieDao();

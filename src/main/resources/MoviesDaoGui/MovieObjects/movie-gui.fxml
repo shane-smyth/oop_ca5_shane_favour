@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="MoviesDaoGui.GUI.MovieListController"
+      spacing="10">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="Movie Database" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10">
+        <Button text="Show All" onAction="#onShowAllMovies"/>
+        <Button text="Find By ID" onAction="#onFindById"/>
+        <Button text="Add Movie" onAction="#onAddMovie"/>
+        <Button text="Update Title" onAction="#onUpdateMovie"/>
+        <Button text="Delete Movie" onAction="#onDeleteMovie"/>
+        <Button text="Filter Movies" onAction="#onFilterMovies"/>
+    </HBox>
+
+    <TableView fx:id="movieTable" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+            <TableColumn fx:id="yearColumn" text="Year" prefWidth="80"/>
+            <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="80"/>
+            <TableColumn fx:id="genreColumn" text="Genre" prefWidth="100"/>
+            <TableColumn fx:id="durationColumn" text="Duration" prefWidth="80"/>
+            <TableColumn fx:id="directorColumn" text="Director" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="messageLabel" style="-fx-font-style: italic;"/>
+</VBox>
