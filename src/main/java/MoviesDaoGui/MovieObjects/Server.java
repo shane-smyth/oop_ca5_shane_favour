@@ -116,7 +116,7 @@ public class Server {
                 }
             }
             else if (request.equals("exit")) {
-                return "Exiting the application..";
+                return "Now exiting the application..Goodbye!";
             }
 
             return "Unknown command";

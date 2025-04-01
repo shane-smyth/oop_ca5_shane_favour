@@ -39,7 +39,7 @@
         </columns>
     </TableView>
     <!-- Exit Button -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
+    <HBox spacing="10" alignment="CENTER">
         <Button onAction="#onExit" text="Exit" />
     </HBox>
 
