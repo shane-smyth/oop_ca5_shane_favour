@@ -4,13 +4,17 @@ import MoviesDaoGui.Converters.JsonConverter;
 import MoviesDaoGui.DAOs.MovieDao;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
+import org.json.JSONArray;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 public class Server {
@@ -45,6 +49,34 @@ public class Server {
             System.out.println("Server error: " + e.getMessage());
         }
     }
+
+    private String getImagesList() throws URISyntaxException { // https://stackoverflow.com/questions/1464291/how-to-read-text-file-from-classpath-in-java
+        File imagesDir = new File(getClass().getResource("/images").toURI());
+        if (imagesDir.exists() && imagesDir.isDirectory()) {
+            String[] files = imagesDir.list((dir, name) ->
+                    name.toLowerCase().endsWith(".jpg") ||
+                            name.toLowerCase().endsWith(".png") ||
+                            name.toLowerCase().endsWith(".jpeg"));
+            return files != null ? new JSONArray(Arrays.asList(files)).toString() : "[]";
+        }
+        return "[]";
+
+    }
+
+    private String getImageData(String imageName) {
+        try {
+            Path imagePath = Paths.get("images", imageName);
+            if (!imagePath.toFile().exists()) {
+                return "Image not found";
+            }
+
+            byte[] fileContent = Files.readAllBytes(imagePath);
+            return Base64.getEncoder().encodeToString(fileContent);
+        } catch (IOException e) {
+            return "Error reading image: " + e.getMessage();
+        }
+    }
+
 
     private String processRequest(String request) {
         try {
@@ -83,6 +115,23 @@ public class Server {
                 String filter = request.substring(13);
                 List<Movie> movies = new MovieDao().filterByTitle(filter);
                 return !movies.isEmpty() ? JsonConverter.moviesListToJsonString(movies) : "No matching movies";
+            }
+            else if (request.equals("getImagesList")) {
+                return getImagesList();
+            }
+            else if (request.startsWith("getImage:")) {
+                String imageName = request.substring(9);
+                try {
+                    InputStream imageStream = getClass().getResourceAsStream("/images/" + imageName);
+                    if (imageStream == null) {
+                        return "Error: Image not found";
+                    }
+
+                    byte[] imageData = imageStream.readAllBytes();
+                    return Base64.getEncoder().encodeToString(imageData);
+                } catch (Exception e) {
+                    return "Error: " + e.getMessage();
+                }
             }
             else if (request.equals("exit")) {
                 return "Goodbye";

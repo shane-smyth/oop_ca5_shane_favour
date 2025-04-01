@@ -38,3 +38,7 @@
     -fx-text-fill: #28a745;
     -fx-font-style: italic;
 }
+
+.image-view {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);
+}
