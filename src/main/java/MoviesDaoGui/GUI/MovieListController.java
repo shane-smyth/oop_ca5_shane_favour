@@ -4,6 +4,7 @@ import MoviesDaoGui.Converters.JsonConverter;
 import MoviesDaoGui.DAOs.DirectorDao;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -396,6 +397,21 @@ public class MovieListController {
                 }
             } catch (Exception e) {
                 updateMessage("Error processing image: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    @FXML
+    private void onExit() {
+        new Thread(() -> {
+            try {
+                String response = sendRequestToServer("exit");
+                System.out.println("\n\nServer response: " + response);
+            } catch (Exception e) {
+                updateMessage("Error notifying server: " + e.getMessage());
+            } finally {
+                Platform.exit();
+                System.exit(0);
             }
         }).start();
     }
