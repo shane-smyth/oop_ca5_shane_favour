@@ -21,6 +21,7 @@
             <Button onAction="#onUpdateMovie" text="Update Title" />
             <Button onAction="#onDeleteMovie" text="Delete Movie" />
             <Button onAction="#onFilterMovies" text="Filter" />
+            <Button onAction="#onGetImagesList" text="Get Images" />
         </HBox>
     </HBox>
 

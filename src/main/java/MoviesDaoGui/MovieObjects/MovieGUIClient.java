@@ -14,7 +14,7 @@ public class MovieGUIClient extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("movie-gui.fxml"));
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, 900, 545);
         primaryStage.setTitle("Movie Database Client");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -8,20 +8,21 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import org.json.JSONArray;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MovieListController {
     @FXML private TableView<Movie> movieTable;
@@ -313,6 +314,90 @@ public class MovieListController {
                 updateMessage("Error filtering movies: " + e.getMessage());
             }
         }).start());
+    }
+
+    @FXML
+    private void onGetImagesList() {
+        new Thread(() -> {
+            try {
+                String response = sendRequestToServer("getImagesList");
+                if (response != null && !response.isEmpty()) {
+                    JSONArray imagesArray = new JSONArray(response);
+                    List<String> imagesList = new ArrayList<>();
+                    for (int i = 0; i < imagesArray.length(); i++) {
+                        imagesList.add(imagesArray.getString(i));
+                    }
+
+                    javafx.application.Platform.runLater(() -> { // https://stackoverflow.com/questions/44850645/java-application-this-operation-is-permitted-on-the-event-thread-only-error
+                        if (!imagesList.isEmpty()) {
+                            showImageSelectionDialog(imagesList);
+                        } else {
+                            updateMessage("No images available on server");
+                        }
+                    });
+                } else {
+                    updateMessage("No images available on server");
+                }
+            } catch (Exception e) {
+                updateMessage("Error getting images list: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private void showImageSelectionDialog(List<String> imagesList) {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(imagesList.get(0), imagesList);
+        dialog.setTitle("Select Image");
+        dialog.setHeaderText("Available Images on Server");
+        dialog.setContentText("Choose an image to download:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(imageName -> downloadAndDisplayImage(imageName));
+    }
+
+    private void downloadAndDisplayImage(String imageName) {
+        new Thread(() -> {
+            try {
+                String response = sendRequestToServer("getImage:" + imageName);
+                if (response != null && !response.isEmpty() && !response.startsWith("Error")) {
+                    byte[] imageData = Base64.getDecoder().decode(response);
+
+                    javafx.application.Platform.runLater(() -> { // https://stackoverflow.com/questions/44850645/java-application-this-operation-is-permitted-on-the-event-thread-only-error
+                        // save to user's choice of location
+                        FileChooser fileChooser = new FileChooser();
+                        fileChooser.setTitle("Save Image");
+                        fileChooser.setInitialFileName(imageName);
+                        File file = fileChooser.showSaveDialog(null);
+
+                        if (file != null) {
+                            new Thread(() -> {
+                                try (FileOutputStream fos = new FileOutputStream(file)) {
+                                    fos.write(imageData);
+                                    updateMessage("Image saved successfully: " + file.getAbsolutePath());
+                                } catch (IOException e) {
+                                    updateMessage("Error saving image: " + e.getMessage());
+                                }
+                            }).start();
+                        }
+                    });
+                    // display in gui https://www.tutorialspoint.com/javafx/javafx_images.htm
+                    javafx.application.Platform.runLater(() -> {
+                        Image image = new Image(new ByteArrayInputStream(imageData));
+                        ImageView imageView = new ImageView(image);
+                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(300);
+
+                        Stage stage = new Stage();
+                        stage.setTitle(imageName);
+                        stage.setScene(new Scene(new VBox(imageView)));
+                        stage.show();
+                    });
+                } else {
+                    updateMessage("Error downloading image: " + response);
+                }
+            } catch (Exception e) {
+                updateMessage("Error processing image: " + e.getMessage());
+            }
+        }).start();
     }
 
     private String sendRequestToServer(String request) {
