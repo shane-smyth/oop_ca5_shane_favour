@@ -8,12 +8,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.json.JSONArray;
 
 import java.io.*;
@@ -374,6 +378,18 @@ public class MovieListController {
                                 }
                             }).start();
                         }
+                    });
+                    // display in gui https://www.tutorialspoint.com/javafx/javafx_images.htm
+                    javafx.application.Platform.runLater(() -> {
+                        Image image = new Image(new ByteArrayInputStream(imageData));
+                        ImageView imageView = new ImageView(image);
+                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(300);
+
+                        Stage stage = new Stage();
+                        stage.setTitle(imageName);
+                        stage.setScene(new Scene(new VBox(imageView)));
+                        stage.show();
                     });
                 } else {
                     updateMessage("Error downloading image: " + response);
