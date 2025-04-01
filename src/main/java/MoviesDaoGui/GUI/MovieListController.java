@@ -400,6 +400,11 @@ public class MovieListController {
         }).start();
     }
 
+    @FXML
+    private void onExit() {
+        System.exit(0);
+    }
+
     private String sendRequestToServer(String request) {
         try (Socket socket = new Socket("localhost", 49000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);

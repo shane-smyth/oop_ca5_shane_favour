@@ -10,9 +10,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -62,21 +59,6 @@ public class Server {
         return "[]";
 
     }
-
-    private String getImageData(String imageName) {
-        try {
-            Path imagePath = Paths.get("images", imageName);
-            if (!imagePath.toFile().exists()) {
-                return "Image not found";
-            }
-
-            byte[] fileContent = Files.readAllBytes(imagePath);
-            return Base64.getEncoder().encodeToString(fileContent);
-        } catch (IOException e) {
-            return "Error reading image: " + e.getMessage();
-        }
-    }
-
 
     private String processRequest(String request) {
         try {
@@ -134,7 +116,7 @@ public class Server {
                 }
             }
             else if (request.equals("exit")) {
-                return "Goodbye";
+                return "Exiting the application..";
             }
 
             return "Unknown command";
