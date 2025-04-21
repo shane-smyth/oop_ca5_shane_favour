@@ -1,5 +1,6 @@
 package MoviesDaoGui.Converters;
 
+import MoviesDaoGui.DTOs.Director;
 import MoviesDaoGui.DTOs.Movie;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,5 +70,21 @@ public class JsonConverter {
             movies.add(movie);
         }
         return movies;
+    }
+
+    public static String directorToJson(Director director) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("director_id", director.getDirector_id());
+        jsonObject.put("name", director.getName());
+        jsonObject.put("country", director.getCountry());
+        return jsonObject.toString();
+    }
+
+    public static Director jsonToDirector(String jsonString) {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        return new Director(
+                jsonObject.getString("name"),
+                jsonObject.getString("country")
+        );
     }
 }
