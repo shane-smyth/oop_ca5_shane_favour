@@ -1,7 +1,9 @@
 package MoviesDaoGui.MovieObjects;
 
 import MoviesDaoGui.Converters.JsonConverter;
+import MoviesDaoGui.DAOs.DirectorDao;
 import MoviesDaoGui.DAOs.MovieDao;
+import MoviesDaoGui.DTOs.Director;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
 import org.json.JSONArray;
@@ -97,6 +99,11 @@ public class Server {
                 String filter = request.substring(13);
                 List<Movie> movies = new MovieDao().filterByTitle(filter);
                 return !movies.isEmpty() ? JsonConverter.moviesListToJsonString(movies) : "No matching movies";
+            }
+            else if (request.startsWith("addDirector:")) {
+                Director director = JsonConverter.jsonToDirector(request.substring(12));
+                Director addedDirector = new DirectorDao().addDirector(director);
+                return addedDirector != null ? JsonConverter.directorToJson(addedDirector) : "Failed to add director";
             }
             else if (request.equals("getImagesList")) {
                 return getImagesList();
