@@ -2,6 +2,7 @@ package MoviesDaoGui.GUI;
 
 import MoviesDaoGui.Converters.JsonConverter;
 import MoviesDaoGui.DAOs.DirectorDao;
+import MoviesDaoGui.DTOs.Director;
 import MoviesDaoGui.DTOs.Movie;
 import MoviesDaoGui.Exceptions.DaoException;
 import javafx.application.Platform;
@@ -313,6 +314,65 @@ public class MovieListController {
                 }
             } catch (Exception e) {
                 updateMessage("Error filtering movies: " + e.getMessage());
+            }
+        }).start());
+    }
+
+    @FXML
+    private void onAddDirector() {
+        Dialog<Director> dialog = new Dialog<>();
+        dialog.setTitle("Add New Director");
+
+        // Set up form fields
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField();
+        TextField countryField = new TextField();
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Country:"), 0, 1);
+        grid.add(countryField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                String name = nameField.getText().trim();
+                String country = countryField.getText().trim();
+
+                if (name.isEmpty() || country.isEmpty()) {
+                    updateMessage("Name and country cannot be empty");
+                    return null;
+                }
+
+                return new Director(name, country);
+            }
+            return null;
+        });
+
+        Optional<Director> result = dialog.showAndWait();
+        result.ifPresent(director -> new Thread(() -> {
+            try {
+                String json = JsonConverter.directorToJson(director);
+                String response = sendRequestToServer("addDirector:" + json);
+
+                if (response != null && !response.isEmpty() && !response.equals("Failed to add director")) {
+                    Director addedDirector = JsonConverter.jsonToDirector(response);
+                    updateMessage("Director added successfully with ID: " + addedDirector.getDirector_id());
+                    // clearing director cache since we added a new one
+                    directorNameCache.clear();
+                }
+                else {
+                    updateMessage("Failed to add director");
+                }
+            } catch (Exception e) {
+                updateMessage("Error adding director: " + e.getMessage());
+                e.printStackTrace();
             }
         }).start());
     }
