@@ -10,12 +10,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.stage.FileChooser;
@@ -43,6 +45,18 @@ public class MovieListController {
     @FXML
     public void initialize() {
         setupTableColumns();
+
+        // https://stackoverflow.com/questions/26563390/detect-doubleclick-on-row-of-tableview-javafx
+        movieTable.setRowFactory(tv -> {
+            TableRow<Movie> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Movie selectedMovie = row.getItem();
+                    showMovieDetails(selectedMovie);
+                }
+            });
+            return row;
+        });
     }
 
     private void setupTableColumns() {
@@ -104,6 +118,111 @@ public class MovieListController {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void showMovieDetails(Movie movie) {
+        new Thread(() -> {
+            try {
+                String imageFilename = findMatchingImage(movie.getTitle());
+
+                if (imageFilename != null) {
+                    String response = sendRequestToServer("getImage:" + imageFilename);
+
+                    if (response != null && !response.isEmpty() && !response.startsWith("Error")) {
+                        byte[] imageData = Base64.getDecoder().decode(response);
+
+                        Platform.runLater(() -> {
+                            Stage detailsStage = new Stage();
+                            detailsStage.setTitle("Movie Details: " + movie.getTitle());
+
+                            Image image = new Image(new ByteArrayInputStream(imageData));
+                            ImageView imageView = new ImageView(image);
+                            imageView.setPreserveRatio(true);
+                            imageView.setFitWidth(300);
+
+                            Label titleLabel = new Label("Title: ");
+                            titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px;");
+                            Label titleValue = new Label(movie.getTitle());
+                            titleValue.setStyle("-fx-font-size: 14px; -fx-padding: 5px;");
+                            HBox titleBox = new HBox(titleLabel, titleValue);
+
+                            Label yearLabel = new Label("Year: ");
+                            yearLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px;");
+                            Label yearValue = new Label(String.valueOf(movie.getRelease_year()));
+                            yearValue.setStyle("-fx-font-size: 14px; -fx-padding: 5px;");
+                            HBox yearBox = new HBox(yearLabel, yearValue);
+
+                            Label ratingLabel = new Label("Rating: ");
+                            ratingLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px;");
+                            Label ratingValue = new Label(String.valueOf(movie.getRating()));
+                            ratingValue.setStyle("-fx-font-size: 14px; -fx-padding: 5px;");
+                            HBox ratingBox = new HBox(ratingLabel, ratingValue);
+
+                            Label genreLabel = new Label("Genre: ");
+                            genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px;");
+                            Label genreValue = new Label(movie.getGenre());
+                            genreValue.setStyle("-fx-font-size: 14px; -fx-padding: 5px;");
+                            HBox genreBox = new HBox(genreLabel, genreValue);
+
+                            Label durationLabel = new Label("Duration: ");
+                            durationLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px;");
+                            Label durationValue = new Label(movie.getDuration() + " mins");
+                            durationValue.setStyle("-fx-font-size: 14px; -fx-padding: 5px;");
+                            HBox durationBox = new HBox(durationLabel, durationValue);
+
+                            Label directorLabel = new Label("Director: ");
+                            directorLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px;");
+                            Label directorValue = new Label(getCachedDirectorName(movie.getDirector_id()));
+                            directorValue.setStyle("-fx-font-size: 14px; -fx-padding: 5px;");
+                            HBox directorBox = new HBox(directorLabel, directorValue);
+
+                            VBox imageBox = new VBox(imageView);
+                            imageBox.setAlignment(Pos.CENTER);
+                            imageBox.setPadding(new Insets(10));
+
+                            VBox infoBox = new VBox(10,
+                                    titleBox, yearBox, ratingBox, genreBox, durationBox, directorBox
+                            );
+                            infoBox.setPadding(new Insets(20));
+
+                            HBox mainContent = new HBox(20, imageBox, infoBox);
+                            mainContent.setPadding(new Insets(20));
+
+                            Scene scene = new Scene(mainContent);
+                            detailsStage.setScene(scene);
+                            detailsStage.show();
+                        });
+                    } else {
+                        Platform.runLater(() -> updateMessage("Could not load image for this movie"));
+                    }
+                } else {
+                    Platform.runLater(() -> updateMessage("No image available for this movie !"));
+                }
+            } catch (Exception e) {
+                Platform.runLater(() -> updateMessage("Error showing movie details: " + e.getMessage()));
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private String findMatchingImage(String movieTitle) throws Exception {
+        String response = sendRequestToServer("getImagesList");
+        if (response != null && !response.isEmpty()) {
+            JSONArray imagesArray = new JSONArray(response);
+
+            String cleanTitle = movieTitle.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+            // searching for matching image
+            for (int i = 0; i < imagesArray.length(); i++) {
+                String imageName = imagesArray.getString(i);
+                String cleanImageName = imageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+                if (cleanImageName.contains(cleanTitle) || cleanTitle.contains(cleanImageName.replace(".jpg", ""))) {
+                    return imageName;
+                }
+            }
+        }
+        return null;
     }
 
     private void preloadDirectorNames(ObservableList<Movie> movies) {
