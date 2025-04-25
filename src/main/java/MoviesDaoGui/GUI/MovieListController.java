@@ -485,8 +485,11 @@ public class MovieListController {
                     updateMessage("Director added successfully with ID: " + addedDirector.getDirector_id());
                     // clearing director cache since we added a new one
                     directorNameCache.clear();
-                }
-                else {
+
+                    // updated list of directors
+                    List<Director> allDirectors = directorDao.getAllDirectors();
+                    Platform.runLater(() -> showDirectorsList(allDirectors));
+                } else {
                     updateMessage("Failed to add director");
                 }
             } catch (Exception e) {
@@ -495,6 +498,33 @@ public class MovieListController {
             }
         }).start());
     }
+
+    private void showDirectorsList(List<Director> directors) {
+        Stage stage = new Stage();
+        stage.setTitle("All Directors");
+
+        TableView<Director> table = new TableView<>();
+        TableColumn<Director, Integer> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("director_id"));
+
+        TableColumn<Director, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Director, String> countryCol = new TableColumn<>("Country");
+        countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
+
+        table.getColumns().addAll(idCol, nameCol, countryCol);
+        table.setItems(FXCollections.observableArrayList(directors));
+        table.setPrefWidth(400);
+        table.setPrefHeight(300);
+
+        VBox layout = new VBox(10, new Label("List of Directors:"), table);
+        layout.setPadding(new Insets(15));
+
+        stage.setScene(new Scene(layout));
+        stage.show();
+    }
+
 
     @FXML
     private void onGetImagesList() {

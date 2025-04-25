@@ -4,6 +4,8 @@ import MoviesDaoGui.DTOs.Director;
 import MoviesDaoGui.Exceptions.DaoException;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DirectorDao extends MySqlDao implements DirectorDaoInterface {
     @Override
@@ -82,5 +84,41 @@ public class DirectorDao extends MySqlDao implements DirectorDaoInterface {
                 throw new DaoException("addDirector() " + e.getMessage());
             }
         }
+    }
+
+    @Override
+    public List<Director> getAllDirectors() throws DaoException {
+        List<Director> directors = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            connection = this.getConnection();
+            String query = "SELECT * FROM directors";
+            ps = connection.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Director d = new Director(
+                        rs.getInt("director_id"),
+                        rs.getString("name"),
+                        rs.getString("country")
+                );
+                directors.add(d);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("getAllDirectors() " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (connection != null) freeConnection(connection);
+            } catch (SQLException e) {
+                throw new DaoException("getAllDirectors() " + e.getMessage());
+            }
+        }
+
+        return directors;
     }
 }

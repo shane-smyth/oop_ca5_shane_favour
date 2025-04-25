@@ -83,6 +83,7 @@ public class JsonConverter {
     public static Director jsonToDirector(String jsonString) {
         JSONObject jsonObject = new JSONObject(jsonString);
         return new Director(
+                jsonObject.getInt("director_id"),
                 jsonObject.getString("name"),
                 jsonObject.getString("country")
         );
